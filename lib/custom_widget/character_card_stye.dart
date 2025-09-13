@@ -1,10 +1,10 @@
-// character_card.dart
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:rick_and_morty_characters/model/character_data.dart';
 import 'package:rick_and_morty_characters/utils/app_styles.dart';
 import 'package:skeletonizer/skeletonizer.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class CharacterCard extends StatefulWidget {
   final CharacterData character;
@@ -47,7 +47,6 @@ class _CharacterCardState extends State<CharacterCard>
     } else {
       await box.put(widget.character.id, widget.character);
     }
-
   }
 
   void _handleTapDown(TapDownDetails details) {
@@ -144,15 +143,25 @@ class _CharacterCardState extends State<CharacterCard>
                                     height: 100,
                                     color: Colors.grey[400],
                                   )
-                                : FadeInImage(
-                                    placeholder: const AssetImage(
-                                        'assets/icons/placeholder.png'),
-                                    image:
-                                        NetworkImage(widget.character.image),
+                                : CachedNetworkImage(
+                                    imageUrl: widget.character.image,
                                     width: 100,
                                     height: 100,
                                     fit: BoxFit.cover,
-                                    fadeInDuration:  Duration(milliseconds: 300),
+                                    placeholder: (context, url) => Container(
+                                      width: 100,
+                                      height: 100,
+                                      color: Colors.grey[400],
+                                    ),
+                                    errorWidget: (context, url, error) =>
+                                        Image.asset(
+                                      'assets/icons/placeholder.png',
+                                      width: 100,
+                                      height: 100,
+                                      fit: BoxFit.cover,
+                                    ),
+                                    fadeInDuration:
+                                        const Duration(milliseconds: 300),
                                   ),
                           ),
                         ),
