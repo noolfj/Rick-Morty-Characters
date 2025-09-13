@@ -1,10 +1,28 @@
+import 'package:hive/hive.dart';
+
+part 'character_data.g.dart';
+
+@HiveType(typeId: 0)
 class CharacterData {
+  @HiveField(0)
   final int id;
+
+  @HiveField(1)
   final String name;
+
+  @HiveField(2)
   final String status;
+
+  @HiveField(3)
   final String species;
+
+  @HiveField(4)
   final String gender;
+
+  @HiveField(5)
   final String image;
+
+  @HiveField(6)
   final LocationInfo location;
 
   CharacterData({
@@ -29,21 +47,25 @@ class CharacterData {
     );
   }
 
-factory CharacterData.empty() {
-  return CharacterData(
-    id: 0,
-    name: '',
-    status: '',
-    species: '',
-    gender: '',
-    location: LocationInfo(name: '', url: ''),
-    image: '',
-  );
-}
+  factory CharacterData.empty() {
+    return CharacterData(
+      id: 0,
+      name: '',
+      status: '',
+      species: '',
+      gender: '',
+      location: LocationInfo(name: '', url: ''),
+      image: '',
+    );
+  }
 }
 
+@HiveType(typeId: 1)
 class LocationInfo {
+  @HiveField(0)
   final String name;
+
+  @HiveField(1)
   final String url;
 
   LocationInfo({

@@ -34,6 +34,7 @@ static ItemConfig _tabNavItem(String assetPath, String title, BuildContext conte
       assetPath,
       width: 24,
       height: 24,
+      color: Colors.deepPurple.shade900,
     ),
     title: title,
     textStyle:  AppStyles.getAppTextStyle(
@@ -43,13 +44,14 @@ static ItemConfig _tabNavItem(String assetPath, String title, BuildContext conte
       context: context,
       fontFamily: 'comic',
     ),
+    
     inactiveIcon: Image.asset(
       assetPath,
       width: 24,
       height: 24,
       color: Colors.grey,
     ),
-    activeForegroundColor: Colors.black,
+    activeForegroundColor: Colors.deepPurple.shade900,
     inactiveForegroundColor: Colors.grey,
   );
 }

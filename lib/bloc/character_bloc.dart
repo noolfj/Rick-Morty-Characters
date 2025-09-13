@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:rick_and_morty_characters/api/api_service.dart';
+import 'package:rick_and_morty_characters/api/cache_service.dart';
 import 'package:rick_and_morty_characters/model/character_data.dart';
 
 part 'character_event.dart';
@@ -25,13 +26,25 @@ class CharacterBloc extends Bloc<CharacterEvent, CharacterState> {
       final data = await apiService.getCharacters(page: currentPage);
       totalPages = data['info']['pages'];
       final results = data['results'] as List;
-      final characters =
-          results.map((e) => CharacterData.fromJson(e)).toList();
-      emit(CharacterLoaded(characters: characters, hasReachedMax: currentPage >= totalPages));
+      final characters = results.map((e) => CharacterData.fromJson(e)).toList();
+  
+      await CharacterCacheService.saveCharacters(characters);
+  
+      emit(CharacterLoaded(
+          characters: characters,
+          hasReachedMax: currentPage >= totalPages));
     } catch (e) {
-      emit(CharacterError(message: e.toString()));
+      final cachedCharacters = await CharacterCacheService.loadCachedCharacters();
+      if (cachedCharacters.isNotEmpty) {
+        emit(CharacterLoaded(characters: cachedCharacters, hasReachedMax: true));
+      }
+      else {
+        emit(CharacterError(message: e.toString()));
+      }
     }
   }
+
+
 
   Future<void> _getLoadMoreCharacters(
       LoadMoreCharacters event, Emitter<CharacterState> emit) async {

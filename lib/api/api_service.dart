@@ -19,4 +19,5 @@ class ApiService {
   Future<dynamic> getCharacters({int page = 1}) async {
     return await _get("character?page=$page");
   }
+  
 }
