@@ -7,62 +7,69 @@ import 'package:rick_and_morty_characters/utils/app_styles.dart';
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
-  @override
-  Widget build(BuildContext context) {
-    return const AppBottomNavBar();
+  List<PersistentTabConfig> _buildNavBarTabs(BuildContext context) {
+    return [
+      _buildNavBarTab(
+        context,
+        screen: MainScreen(),
+        iconPath: 'assets/icons/ic_home.png',
+        title: "Главный экран",
+      ),
+      _buildNavBarTab(
+        context,
+        screen: FavoriteScreen(),
+        iconPath: 'assets/icons/ic_favorite.png',
+        title: "Избранное",
+      ),
+    ];
   }
-}
 
-class AppBottomNavBar extends StatelessWidget {
-  const AppBottomNavBar({super.key});
+  PersistentTabConfig _buildNavBarTab(
+    BuildContext context, {
+    required Widget screen,
+    required String iconPath,
+    required String title,
+  }) {
+    return PersistentTabConfig(
+      screen: screen,
+      item: _buildNavBarItem(context, iconPath, title),
+    );
+  }
 
-  List<PersistentTabConfig> _tabs(BuildContext context) => [
-        PersistentTabConfig(
-          screen: MainScreen(),
-          item: _tabNavItem('assets/icons/ic_home.png', "Главный экран", context),
-        ),
-        PersistentTabConfig(
-          screen: FavoriteScreen(),
-          item: _tabNavItem('assets/icons/ic_favorite.png', "Избранное", context),
-        ),
-      ];
+  static ItemConfig _buildNavBarItem(BuildContext context, String assetPath, String title) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
 
+    final activeColor = isDark ? Colors.white : Colors.deepPurple.shade900;
+    final inactiveColor = isDark ? Colors.grey[700]! : Colors.grey;
 
-static ItemConfig _tabNavItem(String assetPath, String title, BuildContext context) {
-  return ItemConfig(
-    icon: Image.asset(
-      assetPath,
-      width: 24,
-      height: 24,
-      color: Colors.deepPurple.shade900,
-    ),
-    title: title,
-    textStyle:  AppStyles.getAppTextStyle(
-      color: Colors.white,
-      fontSize: 14,
-      fontWeight: FontWeight.w600,
-      context: context,
-      fontFamily: 'comic',
-    ),
-    
-    inactiveIcon: Image.asset(
-      assetPath,
-      width: 24,
-      height: 24,
-      color: Colors.grey,
-    ),
-    activeForegroundColor: Colors.deepPurple.shade900,
-    inactiveForegroundColor: Colors.grey,
-  );
-}
-
+    return ItemConfig(
+      icon: Image.asset(assetPath, width: 24, height: 24, color: activeColor),
+      inactiveIcon: Image.asset(assetPath, width: 24, height: 24, color: inactiveColor),
+      title: title,
+      textStyle: AppStyles.getAppTextStyle(
+        color: activeColor,
+        fontSize: 14,
+        fontWeight: FontWeight.w600,
+        context: context,
+        fontFamily: 'comic',
+      ),
+      activeForegroundColor: activeColor,
+      inactiveForegroundColor: inactiveColor,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return PersistentTabView(
-      tabs: _tabs(context),
+      tabs: _buildNavBarTabs(context),
       navBarBuilder: (navBarConfig) => Style1BottomNavBar(
         navBarConfig: navBarConfig,
+        navBarDecoration: NavBarDecoration(
+          color: isDark ? Colors.black : Colors.white,
+        ),
       ),
     );
   }

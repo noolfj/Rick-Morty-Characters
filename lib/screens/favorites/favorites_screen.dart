@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:rick_and_morty_characters/api/cubit/theme_cubit.dart';
 import 'package:rick_and_morty_characters/model/character_data.dart';
 import 'package:rick_and_morty_characters/custom_widget/character_card_stye.dart';
 import 'package:rick_and_morty_characters/utils/app_styles.dart';
@@ -12,7 +14,7 @@ class FavoriteScreen extends StatefulWidget {
 class _FavoriteScreenState extends State<FavoriteScreen>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
-  final List<String> _tabs = ['Все', 'По имени', 'Статус', 'Вид', 'Тип'];
+  final List<String> _tabs = ['Все', 'По имени', 'Статус', 'Вид', 'Пол'];
 
   @override
   void initState() {
@@ -46,31 +48,49 @@ class _FavoriteScreenState extends State<FavoriteScreen>
     return sorted;
   }
 
-  Widget _buildTabButton(int index) {
-    final isActive = _tabController.index == index;
-    return GestureDetector(
-      onTap: () => _tabController.animateTo(index),
-      child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 6),
-        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-        decoration: BoxDecoration(
-          color: isActive ? Colors.deepPurple[800] : Colors.grey.shade200,
-          borderRadius: BorderRadius.circular(24),
-        ),
-        child: Text(
-          _tabs[index],
-          style: TextStyle(
-            color: isActive ? Colors.white : Colors.grey.shade700,
-            fontWeight: FontWeight.w600,
-          ),
+Widget _buildTabButton(int index) {
+  final isActive = _tabController.index == index;
+  final theme = Theme.of(context);
+  final isDark = theme.brightness == Brightness.dark;
+
+  final activeColor = isDark ? Colors.black : Colors.deepPurple[800];
+  final inactiveColor = isDark ? Colors.grey[700] : Colors.grey.shade200;
+  final textColor = isActive
+      ? (isDark ? Colors.white : Colors.white)
+      : (isDark ? Colors.grey[300] : Colors.grey.shade700);
+
+  return GestureDetector(
+    onTap: () => _tabController.animateTo(index),
+    child: Container(
+      margin: const EdgeInsets.symmetric(horizontal: 6),
+      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+      decoration: BoxDecoration(
+        color: isActive ? activeColor : inactiveColor,
+        borderRadius: BorderRadius.circular(24),
+      ),
+      child: Text(
+        _tabs[index],
+        style: TextStyle(
+          color: textColor,
+          fontWeight: FontWeight.w600,
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 
   @override
   Widget build(BuildContext context) {
     final box = Hive.box<CharacterData>('favorites');
+
+    final cardGradient = LinearGradient(
+      colors: Theme.of(context).brightness == Brightness.dark
+          ? [Colors.grey[900]!, Colors.black87, Colors.black54]
+          : [Colors.deepPurple[900]!, Colors.indigo[900]!, Colors.purple[800]!],
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+    );
+
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(
@@ -78,18 +98,10 @@ class _FavoriteScreenState extends State<FavoriteScreen>
         ),
         child: AppBar(
           elevation: 0,
-          backgroundColor: Colors.transparent,
+          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
           flexibleSpace: Container(
             decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  Colors.deepPurple[900]!,
-                  Colors.indigo[900]!,
-                  Colors.purple[800]!,
-                ],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
+              gradient: cardGradient,
               borderRadius: const BorderRadius.only(
                 bottomLeft: Radius.circular(30),
                 bottomRight: Radius.circular(30),
@@ -107,6 +119,17 @@ class _FavoriteScreenState extends State<FavoriteScreen>
             ),
           ),
           centerTitle: true,
+           actions: [
+            IconButton(
+              icon: Icon(
+                context.read<ThemeCubit>().state.brightness == Brightness.dark
+                    ? Icons.wb_sunny
+                    : Icons.nightlight_round,
+                color: Colors.white,
+              ),
+              onPressed: () => context.read<ThemeCubit>().toggleTheme(),
+            ),
+          ],
         ),
       ),
       body: ValueListenableBuilder(

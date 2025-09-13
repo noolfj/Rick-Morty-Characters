@@ -89,6 +89,14 @@ class _CharacterCardState extends State<CharacterCard>
   Widget build(BuildContext context) {
     final box = Hive.box<CharacterData>('favorites');
 
+    final cardGradient = LinearGradient(
+      colors: Theme.of(context).brightness == Brightness.dark
+          ? [Colors.grey[900]!, Colors.black87, Colors.black54]
+          : [Colors.deepPurple[900]!, Colors.indigo[900]!, Colors.purple[800]!],
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+    );
+
     return ValueListenableBuilder(
       valueListenable: box.listenable(),
       builder: (context, Box<CharacterData> favoritesBox, _) {
@@ -106,15 +114,7 @@ class _CharacterCardState extends State<CharacterCard>
             child: Container(
               margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
               decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    Colors.deepPurple[900]!,
-                    Colors.indigo[900]!,
-                    Colors.purple[800]!,
-                  ],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
+                gradient: cardGradient,
                 borderRadius: BorderRadius.circular(24),
               ),
               child: Material(
@@ -131,37 +131,46 @@ class _CharacterCardState extends State<CharacterCard>
                         Container(
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            border: Border.all(
-                              color: Colors.white,
-                              width: 3,
-                            ),
+                            border: Border.all(color: Colors.white, width: 3),
                           ),
                           child: ClipOval(
-                            child: widget.isLoading
-                                ? Container(
+                            child:
+                                widget.isLoading ||
+                                    widget.character.image == null
+                                ? Image.asset(
+                                    Theme.of(context).brightness ==
+                                            Brightness.dark
+                                        ? 'assets/icons/ic_palceholderDark.png'
+                                        : 'assets/icons/placeholder.png',
                                     width: 100,
                                     height: 100,
-                                    color: Colors.grey[400],
+                                    fit: BoxFit.cover,
                                   )
                                 : CachedNetworkImage(
                                     imageUrl: widget.character.image,
                                     width: 100,
                                     height: 100,
                                     fit: BoxFit.cover,
-                                    placeholder: (context, url) => Container(
-                                      width: 100,
-                                      height: 100,
-                                      color: Colors.grey[400],
-                                    ),
-                                    errorWidget: (context, url, error) =>
-                                        Image.asset(
-                                      'assets/icons/placeholder.png',
+                                    placeholder: (context, url) => Image.asset(
+                                      Theme.of(context).brightness == Brightness.dark
+                                          ? 'assets/icons/ic_palceholderDark.png'
+                                          : 'assets/icons/placeholder.png',
                                       width: 100,
                                       height: 100,
                                       fit: BoxFit.cover,
                                     ),
-                                    fadeInDuration:
-                                        const Duration(milliseconds: 300),
+                                    errorWidget: (context, url, error) =>
+                                        Image.asset(
+                                          Theme.of(context).brightness == Brightness.dark
+                                              ? 'assets/icons/ic_palceholderDark.png'
+                                              : 'assets/icons/placeholder.png',
+                                          width: 100,
+                                          height: 100,
+                                          fit: BoxFit.cover,
+                                        ),
+                                    fadeInDuration: const Duration(
+                                      milliseconds: 300,
+                                    ),
                                   ),
                           ),
                         ),
@@ -185,15 +194,18 @@ class _CharacterCardState extends State<CharacterCard>
                               const SizedBox(height: 8),
                               Container(
                                 padding: const EdgeInsets.symmetric(
-                                    horizontal: 8, vertical: 2),
+                                  horizontal: 8,
+                                  vertical: 2,
+                                ),
                                 decoration: BoxDecoration(
                                   color: _getStatusColor(
-                                          widget.character.status)
-                                      .withOpacity(0.2),
+                                    widget.character.status,
+                                  ).withOpacity(0.2),
                                   borderRadius: BorderRadius.circular(20),
                                   border: Border.all(
                                     color: _getStatusColor(
-                                        widget.character.status),
+                                      widget.character.status,
+                                    ),
                                     width: 1.5,
                                   ),
                                 ),
@@ -203,7 +215,8 @@ class _CharacterCardState extends State<CharacterCard>
                                       : widget.character.status.toUpperCase(),
                                   style: AppStyles.getAppTextStyle(
                                     color: _getStatusColor(
-                                        widget.character.status),
+                                      widget.character.status,
+                                    ),
                                     fontSize: 12,
                                     fontWeight: FontWeight.w600,
                                     context: context,
@@ -214,8 +227,11 @@ class _CharacterCardState extends State<CharacterCard>
                               ),
                               const SizedBox(height: 4),
                               _textRow('Вид:', widget.character.species),
-                              _textRow('Локация:', widget.character.location.name),
-                              _textRow('Тип:', widget.character.gender),
+                              _textRow(
+                                'Локация:',
+                                widget.character.location.name,
+                              ),
+                              _textRow('Пол:', widget.character.gender),
                             ],
                           ),
                         ),
@@ -224,14 +240,14 @@ class _CharacterCardState extends State<CharacterCard>
                           duration: const Duration(milliseconds: 400),
                           transitionBuilder:
                               (Widget child, Animation<double> animation) {
-                            return ScaleTransition(
-                              scale: animation,
-                              child: FadeTransition(
-                                opacity: animation,
-                                child: child,
-                              ),
-                            );
-                          },
+                                return ScaleTransition(
+                                  scale: animation,
+                                  child: FadeTransition(
+                                    opacity: animation,
+                                    child: child,
+                                  ),
+                                );
+                              },
                           child: widget.isLoading
                               ? Container(
                                   width: 50,

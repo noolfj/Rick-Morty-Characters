@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:rick_and_morty_characters/bloc/character_bloc.dart';
+import 'package:rick_and_morty_characters/api/cubit/theme_cubit.dart';
 import 'package:rick_and_morty_characters/custom_widget/character_card_stye.dart';
 import 'package:rick_and_morty_characters/model/character_data.dart';
 import 'package:rick_and_morty_characters/screens/main/character_error_button.dart';
@@ -31,8 +32,16 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final cardGradient = LinearGradient(
+      colors: Theme.of(context).brightness == Brightness.dark
+          ? [Colors.grey[900]!, Colors.black87, Colors.black54]
+          : [Colors.deepPurple[900]!, Colors.indigo[900]!, Colors.purple[800]!],
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+    );
+
     return Scaffold(
-      backgroundColor: Colors.transparent,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       extendBodyBehindAppBar: true,
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(
@@ -43,15 +52,7 @@ class _MainScreenState extends State<MainScreen> {
           forceMaterialTransparency: true,
           flexibleSpace: Container(
             decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  Colors.deepPurple[900]!,
-                  Colors.indigo[900]!,
-                  Colors.purple[800]!,
-                ],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
+              gradient: cardGradient,
               borderRadius: const BorderRadius.only(
                 bottomLeft: Radius.circular(30),
                 bottomRight: Radius.circular(30),
@@ -69,6 +70,17 @@ class _MainScreenState extends State<MainScreen> {
             ),
           ),
           centerTitle: true,
+          actions: [
+            IconButton(
+              icon: Icon(
+                context.read<ThemeCubit>().state.brightness == Brightness.dark
+                    ? Icons.wb_sunny
+                    : Icons.nightlight_round,
+                color: Colors.white,
+              ),
+              onPressed: () => context.read<ThemeCubit>().toggleTheme(),
+            ),
+          ],
         ),
       ),
       body: BlocBuilder<CharacterBloc, CharacterState>(
@@ -91,8 +103,8 @@ class _MainScreenState extends State<MainScreen> {
                 ? state.characters
                 : (state as CharacterLoadingMore).characters;
             final isLoadingMore = state is CharacterLoadingMore;
-           return Padding(
-              padding: const EdgeInsets.only(top: 8), 
+            return Padding(
+              padding: const EdgeInsets.only(top: 8),
               child: ListView.builder(
                 controller: _scrollController,
                 itemCount: characters.length + (isLoadingMore ? 3 : 0),
