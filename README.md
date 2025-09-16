@@ -1,16 +1,17 @@
-# rick_and_morty_characters
+# Rick and Morty Flutter App
 
-A new Flutter project.
+Приложение на Flutter для отображения списка персонажей из мультсериала **"Рик и Морти"** с публичного API.  
+Функции: список персонажей, добавление в избранное, оффлайн-доступ (Hive), пагинация, сортировка избранных.  
+Использовано: Flutter + BLoC, REST API, Hive, поддержка тёмной темы и анимации.  
 
-## Getting Started
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/517651ab-8972-4533-946a-96f5e4d2414c" width="200"/>
+  <img src="https://github.com/user-attachments/assets/83f46d7f-1ceb-42f7-ba99-5c7e44731e4b" width="200"/>
+  <img src="https://github.com/user-attachments/assets/67765eb6-a7c0-4021-88df-1ce29e1a73a3" width="200"/>
+</p>
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/81a7e5ae-c1e5-458a-aa02-795560f73d3b" width="200"/>
+  <img src="https://github.com/user-attachments/assets/53739a4c-c94f-4fe0-831c-457baba563b6" width="200"/>
+  <img src="https://github.com/user-attachments/assets/c4a981d4-6cc4-4958-9511-07c1089a5bbe" width="200"/>
+</p>
